@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://dkpaftbki70f7"]
+
+[ext_resource type="Script" path="res://Scripts/Weapons/Bullet.gd" id="1_kkwmp"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ajrwj"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_3vcpf"]
+
+[node name="Bullet" type="Area3D"]
+script = ExtResource("1_kkwmp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_ajrwj")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_3vcpf")

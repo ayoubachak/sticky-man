@@ -1,13 +1,13 @@
 [gd_scene load_steps=4 format=3 uid="uid://dnd8tfrinx8np"]
 
-[ext_resource type="Script" path="res://Scripts/Enemies/Zombie.gd" id="1_43ias"]
+[ext_resource type="Script" path="res://Scripts/Enemies/Zombie.gd" id="1_dbp0e"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_i43fu"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8tc0i"]
 
 [node name="Zombie" type="CharacterBody3D"]
-script = ExtResource("1_43ias")
+script = ExtResource("1_dbp0e")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_i43fu")

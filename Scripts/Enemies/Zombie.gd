@@ -1,12 +1,15 @@
 extends CharacterBody3D
 
+@export var max_health: int = 100
+var current_health: int
 @export var speed: float = 5.0
 
 @onready var label: Label3D = $Label3D
 var player: Node3D = null
 
 func _ready() -> void:
-	label.text = "Zombie"
+	current_health = max_health
+	label.text = str(current_health)
 	# find the player by group since the scene root is not a Node
 	var players = get_tree().get_nodes_in_group("PlayerCharacter")
 	if players.size() > 0:
@@ -27,3 +30,11 @@ func _physics_process(_delta: float) -> void:
 			velocity.z = dir.z * speed
 
 	move_and_slide()
+
+func take_damage(amount: int) -> void:
+	current_health -= amount
+	if current_health < 0:
+		current_health = 0
+	label.text = str(current_health)
+	if current_health == 0:
+		queue_free()

@@ -123,6 +123,7 @@ var timeBeforeCanGrappleAgainRef : float
 @onready var mesh = $MeshInstance3D
 @onready var hud = $HUD
 @onready var pauseMenu = $PauseMenu
+@export var bullet_scene: PackedScene
 
 func _ready():
 	#set the start move speed
@@ -130,7 +131,7 @@ func _ready():
 	moveAcceleration = walkAcceleration
 	moveDecceleration = walkDecceleration
 	
-	#set the values refenrencials for the needed variables
+	#set the values refenrentials for the needed variables
 	desiredMoveSpeed = moveSpeed 
 	jumpCooldownRef = jumpCooldown
 	nbJumpsInAirAllowedRef = nbJumpsInAirAllowed
@@ -294,6 +295,9 @@ func inputManagement():
 				if Input.is_action_just_pressed("grappleHook"):
 					grappleStateChanges()
 					
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		shoot()
+	
 func displayStats():
 	#call the functions in charge of displaying the controller properties
 	hud.displayCurrentState(currentState)
@@ -754,3 +758,9 @@ func _on_object_tool_send_knockback(knockbackAmount : float, knockbackOrientatio
 	var knockbackForce = -knockbackOrientation * knockbackAmount #opposite of the knockback tool orientation, times knockback amount
 	velocity += knockbackForce if !is_on_floor() else knockbackForce/onFloorKnockbackDivider
 	
+	
+func shoot():
+	var b = bullet_scene.instantiate()
+	# position bullet at camera
+	b.global_transform = cameraHolder.global_transform
+	get_parent().add_child(b)

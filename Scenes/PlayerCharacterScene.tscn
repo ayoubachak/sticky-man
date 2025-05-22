@@ -1,6 +1,7 @@
-[gd_scene load_steps=29 format=3 uid="uid://bwggrf7sbmkcv"]
+[gd_scene load_steps=30 format=3 uid="uid://bwggrf7sbmkcv"]
 
 [ext_resource type="Script" path="res://Scripts/PlayerCharacter/PlayerCharacterScript.gd" id="1_5dbx1"]
+[ext_resource type="PackedScene" uid="uid://dkpaftbki70f7" path="res://Scenes/Weapons/Bullet.tscn" id="2_08t7f"]
 [ext_resource type="Script" path="res://Scripts/PlayerCharacter/CameraScript.gd" id="2_x12n0"]
 [ext_resource type="Script" path="res://Scripts/Others/ObjectToolScript.gd" id="4_4bdjt"]
 [ext_resource type="Script" path="res://Scripts/PlayerCharacter/UI/HUDScript.gd" id="4_f4mp1"]
@@ -194,6 +195,7 @@ grappleLaunchJumpVelocity = 8.0
 downDirJump = true
 onFloorKnockbackDivider = 3.5
 wallGravityMultiplier = 0.7
+bullet_scene = ExtResource("2_08t7f")
 
 [node name="CameraHolder" type="Node3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.540581, 0)
