@@ -1,16 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://b06w1t1or6mvc"]
+[gd_scene load_steps=4 format=3 uid="uid://dnd8tfrinx8np"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_ijxu5"]
+[ext_resource type="Script" path="res://Scripts/Enemies/Zombie.gd" id="1_43ias"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jrore"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_i43fu"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8tc0i"]
 
 [node name="Zombie" type="CharacterBody3D"]
+script = ExtResource("1_43ias")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_ijxu5")
+mesh = SubResource("CapsuleMesh_i43fu")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape3D_jrore")
+shape = SubResource("CapsuleShape3D_8tc0i")
 
 [node name="Label3D" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2367, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2774, 0)

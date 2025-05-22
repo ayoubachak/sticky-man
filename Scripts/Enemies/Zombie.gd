@@ -7,7 +7,10 @@ var player: Node3D = null
 
 func _ready() -> void:
 	label.text = "Zombie"
-	player = get_tree().get_root().find_node("PlayerCharacter", true, false)
+	# find the player by group since the scene root is not a Node
+	var players = get_tree().get_nodes_in_group("PlayerCharacter")
+	if players.size() > 0:
+		player = players[0]
 
 func _physics_process(_delta: float) -> void:
 	if not player:
