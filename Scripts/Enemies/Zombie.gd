@@ -13,12 +13,17 @@ func _ready() -> void:
 		player = players[0]
 
 func _physics_process(_delta: float) -> void:
-	if not player:
-		return
-	# chase on horizontal plane
-	var dir = player.global_transform.origin - global_transform.origin
-	dir.y = 0
-	if dir.length() > 0:
-		dir = dir.normalized()
-		velocity = dir * speed
-		move_and_slide()
+	# apply default 3D gravity
+	var gravity_val = ProjectSettings.get_setting("physics/3d/default_gravity") as float
+	velocity.y -= gravity_val * _delta
+
+	if player:
+		# chase on horizontal plane without touching vertical velocity
+		var dir = player.global_transform.origin - global_transform.origin
+		dir.y = 0
+		if dir.length() > 0:
+			dir = dir.normalized()
+			velocity.x = dir.x * speed
+			velocity.z = dir.z * speed
+
+	move_and_slide()
