@@ -1,21 +1,19 @@
 [gd_scene load_steps=29 format=3 uid="uid://bwggrf7sbmkcv"]
 
-[ext_resource type="Script" uid="uid://chko40443s4qg" path="res://Scripts/PlayerCharacter/PlayerCharacterScript.gd" id="1_5dbx1"]
-[ext_resource type="Script" uid="uid://cm65heo28febt" path="res://Scripts/PlayerCharacter/CameraScript.gd" id="2_x12n0"]
-[ext_resource type="Script" uid="uid://sh7e0ltnepp0" path="res://Scripts/Others/ObjectToolScript.gd" id="4_4bdjt"]
-[ext_resource type="Script" uid="uid://cotjyjxcs1bnn" path="res://Scripts/PlayerCharacter/UI/HUDScript.gd" id="4_f4mp1"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/PlayerCharacterScript.gd" id="1_5dbx1"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/CameraScript.gd" id="2_x12n0"]
+[ext_resource type="Script" path="res://Scripts/Others/ObjectToolScript.gd" id="4_4bdjt"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/UI/HUDScript.gd" id="4_f4mp1"]
 [ext_resource type="FontFile" uid="uid://bwr73i28ligrq" path="res://Arts/Fonts/Ticketing.ttf" id="5_kleop"]
 [ext_resource type="PackedScene" uid="uid://dh3ln04ijax8n" path="res://Scenes/PauseMenuScene.tscn" id="6_3wmtt"]
 [ext_resource type="Texture2D" uid="uid://djoe54ae3gp0a" path="res://Arts/Textures/kenney_prototype_textures/orange/texture_06.png" id="7_jclwn"]
-[ext_resource type="Shader" uid="uid://cs3ll2a0oenu5" path="res://Arts/Shaders/SpeedLinesShader.gdshader" id="12_8u6b8"]
+[ext_resource type="Shader" path="res://Arts/Shaders/SpeedLinesShader.gdshader" id="12_8u6b8"]
 
 [sub_resource type="Curve" id="Curve_qvv7t"]
-_limits = [0.0, 100.0, 0.0, 1.0]
 _data = [Vector2(0.17623, 15.0074), 0.0, 0.0, 0, 0, Vector2(0.286885, 23.6999), 0.0, 0.0, 0, 0, Vector2(0.55123, 58.8168), 0.0, 0.0, 0, 0, Vector2(0.870902, 99.0076), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="Curve" id="Curve_lh00s"]
-_limits = [0.0, 10.0, 0.0, 1.0]
 _data = [Vector2(0.245902, 8.66031), 0.0, 0.0, 0, 0, Vector2(0.577869, 7.86641), 0.0, 0.0, 0, 0, Vector2(0.901639, 6.97328), 0.0, 0.0, 0, 0]
 point_count = 3
 
@@ -106,8 +104,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hoq7f"]
 _data = {
-&"RESET": SubResource("Animation_rt7hc"),
-&"useKnockbackTool": SubResource("Animation_y4es4")
+"RESET": SubResource("Animation_rt7hc"),
+"useKnockbackTool": SubResource("Animation_y4es4")
 }
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5yjma"]
@@ -128,7 +126,6 @@ noise = SubResource("FastNoiseLite_cdisy")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_fk5op"]
 shader = ExtResource("12_8u6b8")
-shader_parameter/noise = SubResource("NoiseTexture2D_78nux")
 shader_parameter/line_color = Color(1, 1, 1, 1)
 shader_parameter/line_count = 2.0
 shader_parameter/line_density = 0.8
@@ -136,6 +133,7 @@ shader_parameter/line_faloff = 1.0
 shader_parameter/mask_size = 0.1
 shader_parameter/mask_edge = 0.8
 shader_parameter/animation_speed = 20.0
+shader_parameter/noise = SubResource("NoiseTexture2D_78nux")
 
 [sub_resource type="LabelSettings" id="LabelSettings_rpyl3"]
 line_spacing = 5.0

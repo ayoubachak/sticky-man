@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://bdhpuj7itpv6j"]
 
-[ext_resource type="Script" uid="uid://dwdoiqhmcgaex" path="res://Scripts/PlayerCharacter/UI/OptionsMenuScript.gd" id="1_bupa7"]
-[ext_resource type="Script" uid="uid://mbv8e2uen2kp" path="res://Scripts/PlayerCharacter/UI/InputManagerScript.gd" id="2_dr6kr"]
-[ext_resource type="Script" uid="uid://8spmwpx3gify" path="res://Scripts/PlayerCharacter/UI/VolumeManagementScript.gd" id="4_ss2nf"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/UI/OptionsMenuScript.gd" id="1_bupa7"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/UI/InputManagerScript.gd" id="2_dr6kr"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/UI/VolumeManagementScript.gd" id="4_ss2nf"]
 [ext_resource type="FontFile" uid="uid://bwr73i28ligrq" path="res://Arts/Fonts/Ticketing.ttf" id="5_cvsgs"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_kjv5q"]

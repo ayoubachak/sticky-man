@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dh3ln04ijax8n"]
 
 [ext_resource type="FontFile" uid="uid://bwr73i28ligrq" path="res://Arts/Fonts/Ticketing.ttf" id="1_g88fa"]
-[ext_resource type="Script" uid="uid://uiryfs32q2sa" path="res://Scripts/PlayerCharacter/UI/PauseMenuScript.gd" id="1_oxp60"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/UI/PauseMenuScript.gd" id="1_oxp60"]
 [ext_resource type="PackedScene" uid="uid://bdhpuj7itpv6j" path="res://Scenes/OptionsMenuScene.tscn" id="3_0w74v"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_eaa6r"]
