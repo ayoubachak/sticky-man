@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bwggrf7sbmkcv"]
+[gd_scene load_steps=37 format=3 uid="uid://bwggrf7sbmkcv"]
 
 [ext_resource type="Script" path="res://Scripts/PlayerCharacter/PlayerCharacterScript.gd" id="1_5dbx1"]
 [ext_resource type="PackedScene" uid="uid://dkpaftbki70f7" path="res://Scenes/Weapons/Bullet.tscn" id="2_08t7f"]
@@ -150,6 +150,48 @@ font = ExtResource("5_kleop")
 font_size = 20
 outline_size = 1
 outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_DashBarBG"]
+bg_color = Color(0.1, 0.1, 0.1, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_DashBar"]
+bg_color = Color(0.2, 0.6, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GrappleBarBG"]
+bg_color = Color(0.1, 0.1, 0.1, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GrappleBar"]
+bg_color = Color(0.8, 0.4, 0.8, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_KnockbackBarBG"]
+bg_color = Color(0.1, 0.1, 0.1, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_KnockbackBar"]
+bg_color = Color(1, 0.6, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="PlayerCharacter" type="CharacterBody3D" groups=["PlayerCharacter"]]
 collision_mask = 3
@@ -598,6 +640,107 @@ theme_override_fonts/font = ExtResource("5_kleop")
 theme_override_font_sizes/font_size = 24
 text = "SCORE: 0"
 horizontal_alignment = 2
+
+[node name="AbilitiesContainer" type="VBoxContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -250.0
+offset_top = 130.0
+offset_right = -20.0
+offset_bottom = 220.0
+grow_horizontal = 0
+
+[node name="DashBar" type="ProgressBar" parent="HUD/AbilitiesContainer"]
+custom_minimum_size = Vector2(220, 20)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_DashBarBG")
+theme_override_styles/fill = SubResource("StyleBoxFlat_DashBar")
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="HUD/AbilitiesContainer/DashBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -8.0
+offset_right = 20.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 12
+text = "DASH"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GrappleBar" type="ProgressBar" parent="HUD/AbilitiesContainer"]
+custom_minimum_size = Vector2(220, 20)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_GrappleBarBG")
+theme_override_styles/fill = SubResource("StyleBoxFlat_GrappleBar")
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="HUD/AbilitiesContainer/GrappleBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -8.0
+offset_right = 30.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 12
+text = "GRAPPLE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="KnockbackBar" type="ProgressBar" parent="HUD/AbilitiesContainer"]
+custom_minimum_size = Vector2(220, 20)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_KnockbackBarBG")
+theme_override_styles/fill = SubResource("StyleBoxFlat_KnockbackBar")
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="HUD/AbilitiesContainer/KnockbackBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -8.0
+offset_right = 35.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 12
+text = "KNOCKBACK"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="GameOverScreen" type="Control" parent="HUD"]
 process_mode = 3

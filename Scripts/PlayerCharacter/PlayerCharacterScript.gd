@@ -346,6 +346,10 @@ func displayStats():
 	hud.displayNbJumpsAllowedInAir(nbJumpsInAirAllowed)
 	hud.displayGrappleHookToolWaitTime(timeBeforeCanGrappleAgain)
 	
+	# Update ability cooldown bars
+	hud.update_dash_bar(timeBeforeCanDashAgain, timeBeforeCanDashAgainRef)
+	hud.update_grapple_bar(timeBeforeCanGrappleAgain, timeBeforeCanGrappleAgainRef)
+	
 	#not a property, but a visual
 	if currentState == states.DASH: hud.displaySpeedLines(dashTime)
 	

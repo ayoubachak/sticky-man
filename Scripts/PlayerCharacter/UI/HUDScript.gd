@@ -23,6 +23,11 @@ var last_notification_time: float = 0
 @onready var game_over_screen = $GameOverScreen
 @onready var score_label = $ScoreContainer/ScoreLabel
 
+# Ability bars references
+@onready var dash_bar = $AbilitiesContainer/DashBar
+@onready var grapple_bar = $AbilitiesContainer/GrappleBar
+@onready var knockback_bar = $AbilitiesContainer/KnockbackBar
+
 func _ready():
 	# Set process mode to allow UI interaction when the game is paused
 	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
@@ -40,6 +45,28 @@ func _ready():
 		print("Score label initialized")
 	else:
 		print("WARNING: Score label not found in HUD")
+	
+	# Initialize ability bars
+	if has_node("AbilitiesContainer/DashBar"):
+		dash_bar = $AbilitiesContainer/DashBar
+		dash_bar.value = 100.0
+		print("Dash bar initialized")
+	else:
+		print("WARNING: Dash bar not found in HUD")
+		
+	if has_node("AbilitiesContainer/GrappleBar"):
+		grapple_bar = $AbilitiesContainer/GrappleBar
+		grapple_bar.value = 100.0
+		print("Grapple bar initialized")
+	else:
+		print("WARNING: Grapple bar not found in HUD")
+		
+	if has_node("AbilitiesContainer/KnockbackBar"):
+		knockback_bar = $AbilitiesContainer/KnockbackBar
+		knockback_bar.value = 100.0
+		print("Knockback bar initialized")
+	else:
+		print("WARNING: Knockback bar not found in HUD")
 	
 	# Hide game over screen at start
 	if game_over_screen:
@@ -165,6 +192,43 @@ func update_score_display(new_score: int):
 	score_label.modulate = Color(1, 1, 0.5) # Bright yellow
 	var tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 	tween.tween_property(score_label, "modulate", Color(1, 1, 1), 0.5)
+
+# Update the dash ability bar (shows remaining cooldown as percentage)
+func update_dash_bar(current_cooldown: float, max_cooldown: float):
+	if dash_bar and is_instance_valid(dash_bar):
+		# When cooldown is 0, bar should be full (100%), when max cooldown, bar should be empty (0%)
+		var percentage = ((max_cooldown - current_cooldown) / max_cooldown) * 100.0
+		dash_bar.value = percentage
+		
+		# Optional: Change opacity based on availability
+		if current_cooldown <= 0:
+			dash_bar.modulate.a = 1.0  # Fully available
+		else:
+			dash_bar.modulate.a = 0.7  # On cooldown
+
+# Update the grapple hook ability bar
+func update_grapple_bar(current_cooldown: float, max_cooldown: float):
+	if grapple_bar and is_instance_valid(grapple_bar):
+		var percentage = ((max_cooldown - current_cooldown) / max_cooldown) * 100.0
+		grapple_bar.value = percentage
+		
+		# Optional: Change opacity based on availability
+		if current_cooldown <= 0:
+			grapple_bar.modulate.a = 1.0  # Fully available
+		else:
+			grapple_bar.modulate.a = 0.7  # On cooldown
+
+# Update the knockback tool ability bar
+func update_knockback_bar(current_cooldown: float, max_cooldown: float):
+	if knockback_bar and is_instance_valid(knockback_bar):
+		var percentage = ((max_cooldown - current_cooldown) / max_cooldown) * 100.0
+		knockback_bar.value = percentage
+		
+		# Optional: Change opacity based on availability
+		if current_cooldown <= 0:
+			knockback_bar.modulate.a = 1.0  # Fully available
+		else:
+			knockback_bar.modulate.a = 0.7  # On cooldown
 
 # Show a milestone notification when the player reaches a score threshold
 func show_milestone_notification(message: String):

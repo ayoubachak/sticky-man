@@ -36,3 +36,7 @@ func timeManagement(delta : float):
 func sendProperties():
 	#display knockback tool properties
 	hud.displayKnockbackToolWaitTime(waitTimeBefCanUseKnobaAgain)
+	
+	# Update knockback ability bar
+	if hud.has_method("update_knockback_bar"):
+		hud.update_knockback_bar(waitTimeBefCanUseKnobaAgain, waitTimeBefCanUseKnobaAgainRef)
