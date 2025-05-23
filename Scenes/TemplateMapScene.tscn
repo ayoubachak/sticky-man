@@ -130,11 +130,12 @@ size = Vector3(34.8449, 8, 0)
 [node name="Blocks" type="Node3D" parent="Map"]
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Map/Blocks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128.598, -0.137161, 23.0408)
+transform = Transform3D(2.05434, 0, 0, 0, 0.996021, 0, 0, 0, 1.39614, -128.598, -0.137161, 23.0408)
 use_collision = true
 collision_mask = 2
 size = Vector3(260, 1, 210)
 material = SubResource("StandardMaterial3D_st80m")
+metadata/_edit_group_ = true
 
 [node name="CSGBox3D12" type="CSGBox3D" parent="Map/Blocks"]
 transform = Transform3D(0.999956, -0.00940719, 0, 0.00940719, 0.999956, 0, 0, 0, 1, -2.09055, 4.20324, 0.864672)
