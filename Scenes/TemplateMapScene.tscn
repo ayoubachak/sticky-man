@@ -295,7 +295,6 @@ script = ExtResource("5_f87t6")
 zombie_scene = ExtResource("6_iofeq")
 
 [node name="Timer" type="Timer" parent="ZombieSpawner"]
-wait_time = 2.502
 autostart = true
 
 [connection signal="area_entered" from="Map/Jumppads/Jumppad/Area3D" to="Map/Jumppads/Jumppad" method="_on_area_3d_area_entered"]

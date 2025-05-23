@@ -41,9 +41,9 @@ func _ready() -> void:
 	material.emission_energy_multiplier = 8.0  # Increased emission for better visibility
 	$MeshInstance3D.material_override = material
 	
-	# Increase the size of the bullet significantly
-	$MeshInstance3D.scale = Vector3(2.0, 2.0, 2.0)  # Much larger size
-	
+	# Remove hardcoded scaling; allow scene or other code to set the mesh scale
+	# $MeshInstance3D.scale = Vector3(2.0, 2.0, 2.0)  # Commented out
+
 	# Auto-destroy after lifetime
 	get_tree().create_timer(lifetime).timeout.connect(func(): queue_free())
 
