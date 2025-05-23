@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://bwggrf7sbmkcv"]
+[gd_scene load_steps=31 format=3 uid="uid://bwggrf7sbmkcv"]
 
 [ext_resource type="Script" path="res://Scripts/PlayerCharacter/PlayerCharacterScript.gd" id="1_5dbx1"]
 [ext_resource type="PackedScene" uid="uid://dkpaftbki70f7" path="res://Scenes/Weapons/Bullet.tscn" id="2_08t7f"]
@@ -8,6 +8,7 @@
 [ext_resource type="FontFile" uid="uid://bwr73i28ligrq" path="res://Arts/Fonts/Ticketing.ttf" id="5_kleop"]
 [ext_resource type="PackedScene" uid="uid://dh3ln04ijax8n" path="res://Scenes/PauseMenuScene.tscn" id="6_3wmtt"]
 [ext_resource type="Texture2D" uid="uid://djoe54ae3gp0a" path="res://Arts/Textures/kenney_prototype_textures/orange/texture_06.png" id="7_jclwn"]
+[ext_resource type="Script" path="res://Scripts/UI/GameOverScreenScript.gd" id="8_gos"]
 [ext_resource type="Shader" path="res://Arts/Shaders/SpeedLinesShader.gdshader" id="12_8u6b8"]
 
 [sub_resource type="Curve" id="Curve_qvv7t"]
@@ -580,6 +581,24 @@ text = "100 / 100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="ScoreContainer" type="VBoxContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -400.0
+offset_top = 60.0
+offset_right = -20.0
+offset_bottom = 120.0
+grow_horizontal = 0
+
+[node name="ScoreLabel" type="Label" parent="HUD/ScoreContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 24
+text = "SCORE: 0"
+horizontal_alignment = 2
+
 [node name="GameOverScreen" type="Control" parent="HUD"]
 process_mode = 3
 visible = false
@@ -589,6 +608,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("8_gos")
 
 [node name="ColorRect" type="ColorRect" parent="HUD/GameOverScreen"]
 layout_mode = 1
@@ -625,6 +645,16 @@ horizontal_alignment = 1
 [node name="HSeparator" type="HSeparator" parent="HUD/GameOverScreen/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
+
+[node name="FinalScoreLabel" type="Label" parent="HUD/GameOverScreen/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 40
+text = "FINAL SCORE: 0"
+horizontal_alignment = 1
 
 [node name="RestartButton" type="Button" parent="HUD/GameOverScreen/VBoxContainer"]
 custom_minimum_size = Vector2(200, 60)

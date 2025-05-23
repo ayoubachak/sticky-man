@@ -66,10 +66,6 @@ shadow_enabled = true
 
 [node name="PlayerCharacterV2" parent="PlayerCharacter" instance=ExtResource("1_tvhlt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.5544, 1.54036, 0)
-slideTimeRef = 0.0
-max_health = 100
-invincibility_time = 0.5
-timeBeforeCanDashAgain = 0.2
 
 [node name="Map" type="Node3D" parent="."]
 

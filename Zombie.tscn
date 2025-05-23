@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://dnd8tfrinx8np"]
+[gd_scene load_steps=4 format=3 uid="uid://dvp3p54pfnyau"]
 
 [ext_resource type="Script" path="res://Scripts/Enemies/Zombie.gd" id="1_dbp0e"]
 
