@@ -24,6 +24,7 @@ var inputActions : Dictionary = {
 	"dash" : "Dash",
 	"grappleHook" : "Grapple hook",
 	"useKnockbackTool" : "Knockack tool",
+	"switchWeapon" : "Switch weapon",
 	"pauseMenu" : "Pause menu"
 }
 

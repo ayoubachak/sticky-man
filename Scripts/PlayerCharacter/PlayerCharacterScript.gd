@@ -95,6 +95,13 @@ var score: int = 0
 @export var elite_zombie_threshold: int = 100 # Points needed before elite zombies spawn
 @export var spawn_rate_increase_threshold: int = 200 # Points needed before spawn rate increases
 
+# Weapon System
+@export_group("weapon system")
+var weapons: Array[BaseWeapon] = []
+var current_weapon_index: int = 0
+var current_weapon: BaseWeapon
+@export var bullet_scene: PackedScene
+
 # Ability Energy System
 @export_group("ability energy system")
 @export var dash_max_energy: float = 1.0
@@ -154,7 +161,6 @@ var timeBeforeCanGrappleAgainRef : float
 @onready var mesh = $MeshInstance3D
 @onready var hud = $HUD
 @onready var pauseMenu = $PauseMenu
-@export var bullet_scene: PackedScene
 
 func _ready():
 	# Add player to group for reference by bullets
@@ -168,6 +174,9 @@ func _ready():
 	score = 0
 	if hud:
 		hud.update_score_display(score)
+	
+	# Initialize weapon system
+	initialize_weapons()
 	
 	#set the start move speed
 	moveSpeed = walkSpeed
@@ -218,6 +227,9 @@ func _physics_process(delta):
 	
 	# Regenerate ability energy over time
 	regenerate_ability_energy(delta)
+	
+	# Update weapon cooldowns
+	update_weapon_cooldowns(delta)
 	
 	applies(delta)
 	
@@ -345,10 +357,14 @@ func inputManagement():
 					grappleStateChanges()
 					
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		shoot()
+		shoot_weapon()
 		
 	if Input.is_action_just_pressed("useKnockbackTool") and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 		pass # Prevent both grappling hook and knockback tool from activating simultaneously
+	
+	# Weapon switching with E key
+	if Input.is_action_just_pressed("switchWeapon"):  # E key
+		switch_weapon()
 	
 func displayStats():
 	#call the functions in charge of displaying the controller properties
@@ -825,20 +841,21 @@ func _on_object_tool_send_knockback(knockbackAmount : float, knockbackOrientatio
 	velocity += knockbackForce if !is_on_floor() else knockbackForce/onFloorKnockbackDivider
 	
 	
-func shoot():
-	var b = bullet_scene.instantiate()
-	print("Creating bullet from: ", bullet_scene.resource_path)
-
-	# Calculate bullet transform based on camera
-	var bullet_transform = camera3d.global_transform
-	# Offset spawn point a bit forward
-	bullet_transform.origin += -bullet_transform.basis.z.normalized() * 2.0
-
-	# Apply full transform to the bullet
-	b.global_transform = bullet_transform
+func shoot_weapon():
+	if not current_weapon or not current_weapon.can_shoot():
+		return false
 	
-	# Add bullet to the game
-	get_tree().get_root().add_child(b)
+	# Calculate spawn position and rotation
+	var spawn_position = camera3d.global_transform.origin + (-camera3d.global_transform.basis.z.normalized() * 2.0)
+	var spawn_rotation = camera3d.global_transform
+	
+	# Debug output
+	print("Camera transform: ", camera3d.global_transform)
+	print("Camera forward direction: ", -camera3d.global_transform.basis.z.normalized())
+	print("Spawn position: ", spawn_position)
+	
+	# Fire the weapon
+	return current_weapon.shoot(spawn_position, spawn_rotation)
 
 # Handle player damage
 func take_damage(amount: int) -> void:
@@ -952,3 +969,53 @@ func use_dash_energy():
 func use_grapple_energy():
 	grapple_current_energy -= grapple_energy_consumption
 	grapple_current_energy = max(grapple_current_energy, 0.0)
+
+# Initialize weapon system
+func initialize_weapons():
+	# Create weapon instances
+	var assault_rifle = AssaultRifle.new()
+	assault_rifle.projectile_scene = bullet_scene
+	
+	var rocket_launcher = RocketLauncher.new()
+	rocket_launcher.projectile_scene = bullet_scene
+	
+	var plasma_cannon = PlasmaCannon.new()
+	plasma_cannon.projectile_scene = bullet_scene
+	
+	# Add weapons to array
+	weapons = [assault_rifle, rocket_launcher, plasma_cannon]
+	current_weapon_index = 0
+	current_weapon = weapons[current_weapon_index]
+	
+	# Update HUD
+	if hud and hud.has_method("update_current_weapon_display"):
+		hud.update_current_weapon_display(current_weapon.weapon_name, current_weapon_index)
+	
+	print("Weapon system initialized with ", weapons.size(), " weapons")
+
+# Switch to next weapon
+func switch_weapon():
+	if weapons.size() <= 1:
+		return
+		
+	current_weapon_index = (current_weapon_index + 1) % weapons.size()
+	current_weapon = weapons[current_weapon_index]
+	
+	# Update HUD
+	if hud and hud.has_method("update_current_weapon_display"):
+		hud.update_current_weapon_display(current_weapon.weapon_name, current_weapon_index)
+	
+	print("Switched to weapon: ", current_weapon.weapon_name)
+
+# Update weapon cooldowns
+func update_weapon_cooldowns(delta: float):
+	for weapon in weapons:
+		if weapon:
+			weapon.update_cooldown(delta)
+	
+	# Update HUD weapon cooldown bars
+	if hud and hud.has_method("update_weapon_cooldowns") and weapons.size() >= 3:
+		var cooldown1 = weapons[0].get_cooldown_percentage()
+		var cooldown2 = weapons[1].get_cooldown_percentage()
+		var cooldown3 = weapons[2].get_cooldown_percentage()
+		hud.update_weapon_cooldowns(cooldown1, cooldown2, cooldown3)

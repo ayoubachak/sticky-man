@@ -225,6 +225,7 @@ slideTime = 1.0
 timeBeforeCanSlideAgain = 0.5
 maxSlopeAngle = 10.0
 wallJumpVelocity = 3.0
+bullet_scene = ExtResource("2_08t7f")
 dashTime = 0.11
 nbDashAllowed = 3
 timeBefReloadDash = 0.6
@@ -238,7 +239,6 @@ grappleLaunchJumpVelocity = 8.0
 downDirJump = true
 onFloorKnockbackDivider = 3.5
 wallGravityMultiplier = 0.7
-bullet_scene = ExtResource("2_08t7f")
 
 [node name="CameraHolder" type="Node3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.540581, 0)
@@ -739,6 +739,115 @@ theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("5_kleop")
 theme_override_font_sizes/font_size = 12
 text = "KNOCKBACK"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WeaponsContainer" type="VBoxContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -120.0
+offset_right = 200.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="CurrentWeaponLabel" type="Label" parent="HUD/WeaponsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 18
+text = "ASSAULT RIFLE"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="HUD/WeaponsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Weapon1Bar" type="ProgressBar" parent="HUD/WeaponsContainer"]
+custom_minimum_size = Vector2(380, 15)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="HUD/WeaponsContainer/Weapon1Bar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -6.0
+offset_right = 40.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 10
+text = "ASSAULT RIFLE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Weapon2Bar" type="ProgressBar" parent="HUD/WeaponsContainer"]
+custom_minimum_size = Vector2(380, 15)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="HUD/WeaponsContainer/Weapon2Bar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -6.0
+offset_right = 50.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 10
+text = "ROCKET LAUNCHER"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Weapon3Bar" type="ProgressBar" parent="HUD/WeaponsContainer"]
+custom_minimum_size = Vector2(380, 15)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="HUD/WeaponsContainer/Weapon3Bar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -45.0
+offset_top = -6.0
+offset_right = 45.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_kleop")
+theme_override_font_sizes/font_size = 10
+text = "PLASMA CANNON"
 horizontal_alignment = 1
 vertical_alignment = 1
 

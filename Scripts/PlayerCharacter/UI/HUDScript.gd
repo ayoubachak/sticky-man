@@ -28,6 +28,12 @@ var last_notification_time: float = 0
 @onready var grapple_bar = $AbilitiesContainer/GrappleBar
 @onready var knockback_bar = $AbilitiesContainer/KnockbackBar
 
+# Weapon cooldown bars references
+@onready var current_weapon_label = $WeaponsContainer/CurrentWeaponLabel
+@onready var weapon1_bar = $WeaponsContainer/Weapon1Bar
+@onready var weapon2_bar = $WeaponsContainer/Weapon2Bar
+@onready var weapon3_bar = $WeaponsContainer/Weapon3Bar
+
 func _ready():
 	# Set process mode to allow UI interaction when the game is paused
 	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
@@ -67,6 +73,35 @@ func _ready():
 		print("Knockback bar initialized")
 	else:
 		print("WARNING: Knockback bar not found in HUD")
+	
+	# Initialize weapon cooldown bars
+	if has_node("WeaponsContainer/CurrentWeaponLabel"):
+		current_weapon_label = $WeaponsContainer/CurrentWeaponLabel
+		current_weapon_label.text = "ASSAULT RIFLE"
+		print("Current weapon label initialized")
+	else:
+		print("WARNING: Current weapon label not found in HUD")
+	
+	if has_node("WeaponsContainer/Weapon1Bar"):
+		weapon1_bar = $WeaponsContainer/Weapon1Bar
+		weapon1_bar.value = 100.0
+		print("Weapon 1 bar initialized")
+	else:
+		print("WARNING: Weapon 1 bar not found in HUD")
+		
+	if has_node("WeaponsContainer/Weapon2Bar"):
+		weapon2_bar = $WeaponsContainer/Weapon2Bar
+		weapon2_bar.value = 100.0
+		print("Weapon 2 bar initialized")
+	else:
+		print("WARNING: Weapon 2 bar not found in HUD")
+		
+	if has_node("WeaponsContainer/Weapon3Bar"):
+		weapon3_bar = $WeaponsContainer/Weapon3Bar
+		weapon3_bar.value = 100.0
+		print("Weapon 3 bar initialized")
+	else:
+		print("WARNING: Weapon 3 bar not found in HUD")
 	
 	# Hide game over screen at start
 	if game_over_screen:
@@ -410,3 +445,57 @@ func _input(event):
 				if rect.has_point(event.position):
 					_on_quit_button_pressed()
 					accept_event()
+
+# Update weapon cooldown bars
+func update_weapon_cooldowns(weapon1_cooldown: float, weapon2_cooldown: float, weapon3_cooldown: float):
+	# Update weapon 1 (Assault Rifle)
+	if weapon1_bar and is_instance_valid(weapon1_bar):
+		var percentage1 = (1.0 - weapon1_cooldown) * 100.0
+		weapon1_bar.value = percentage1
+		
+		# Yellow color when on cooldown, white when ready
+		if weapon1_cooldown > 0.0:
+			weapon1_bar.modulate = Color(1, 1, 0, 0.8)  # Yellow with transparency
+		else:
+			weapon1_bar.modulate = Color(1, 1, 1, 1)  # White when ready
+	
+	# Update weapon 2 (Rocket Launcher)
+	if weapon2_bar and is_instance_valid(weapon2_bar):
+		var percentage2 = (1.0 - weapon2_cooldown) * 100.0
+		weapon2_bar.value = percentage2
+		
+		# Yellow color when on cooldown, white when ready
+		if weapon2_cooldown > 0.0:
+			weapon2_bar.modulate = Color(1, 1, 0, 0.8)  # Yellow with transparency
+		else:
+			weapon2_bar.modulate = Color(1, 1, 1, 1)  # White when ready
+	
+	# Update weapon 3 (Plasma Cannon)
+	if weapon3_bar and is_instance_valid(weapon3_bar):
+		var percentage3 = (1.0 - weapon3_cooldown) * 100.0
+		weapon3_bar.value = percentage3
+		
+		# Yellow color when on cooldown, white when ready
+		if weapon3_cooldown > 0.0:
+			weapon3_bar.modulate = Color(1, 1, 0, 0.8)  # Yellow with transparency
+		else:
+			weapon3_bar.modulate = Color(1, 1, 1, 1)  # White when ready
+
+# Update current weapon display
+func update_current_weapon_display(weapon_name: String, current_weapon_index: int):
+	if current_weapon_label and is_instance_valid(current_weapon_label):
+		current_weapon_label.text = weapon_name.to_upper()
+		
+		# Highlight the current weapon bar
+		var weapon_bars = [weapon1_bar, weapon2_bar, weapon3_bar]
+		for i in range(weapon_bars.size()):
+			if weapon_bars[i] and is_instance_valid(weapon_bars[i]):
+				if i == current_weapon_index:
+					# Current weapon - add bright border or highlight
+					weapon_bars[i].modulate.a = 1.0
+					# Scale slightly larger to show it's selected
+					weapon_bars[i].scale = Vector2(1.1, 1.1)
+				else:
+					# Other weapons - dimmed
+					weapon_bars[i].modulate.a = 0.7
+					weapon_bars[i].scale = Vector2(1.0, 1.0)
