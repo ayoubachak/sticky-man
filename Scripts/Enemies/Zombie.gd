@@ -6,6 +6,7 @@ var current_health: int
 @export var attack_damage: int = 10    # Damage per hit
 @export var attack_interval: float = 2.0 # Time between attacks
 var attack_timer: float = 0.0 # Current attack timer
+@export var is_elite_zombie: bool = false # Whether this is an elite zombie
 
 @onready var label: Label3D = $Label3D
 @onready var mesh_instance: MeshInstance3D = $MeshInstance3D
@@ -21,7 +22,21 @@ func _ready() -> void:
 	
 	# Create a material for hit effects
 	hit_material = StandardMaterial3D.new()
-	hit_material.albedo_color = Color(1, 1, 1, 1)
+	
+	# Set appropriate color based on zombie type
+	if is_elite_zombie:
+		hit_material.albedo_color = Color(0.8, 0.1, 0.1, 1.0) # Red for elite
+		# Make the elite zombie slightly larger for better visibility
+		if mesh_instance:
+			mesh_instance.scale = Vector3(1.2, 1.2, 1.2)
+		# Make the elite zombie health label red
+		if label:
+			label.modulate = Color(0.8, 0.1, 0.1, 1.0)
+			label.outline_modulate = Color(1, 1, 1, 1) # White outline for contrast
+			label.outline_size = 2
+	else:
+		hit_material.albedo_color = Color(1, 1, 1, 1) # White for regular zombies
+	
 	if mesh_instance:
 		mesh_instance.set_surface_override_material(0, hit_material)
 	
@@ -76,9 +91,18 @@ func take_damage(amount: int) -> void:
 	
 	# Check if zombie is dead
 	if current_health <= 0:
+		# Award score points to player
+		var players = get_tree().get_nodes_in_group("PlayerCharacter")
+		if players.size() > 0:
+			var player_char = players[0]
+			# Check zombie type (regular or elite)
+			var points = player_char.elite_zombie_kill_points if is_elite_zombie else player_char.zombie_kill_points
+			player_char.add_score(points)
+		
 		# Play death effect using the prepared material
 		if hit_material:
-			hit_material.albedo_color = Color(0.5, 0.5, 0.5, 1)		# Schedule deletion after a short delay for visual feedback
+			hit_material.albedo_color = Color(0.5, 0.5, 0.5, 1)
+		# Schedule deletion after a short delay for visual feedback
 		get_tree().create_timer(0.3).timeout.connect(func(): queue_free())
 		
 # Attack the player character

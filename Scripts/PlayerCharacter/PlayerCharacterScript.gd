@@ -86,6 +86,15 @@ var current_health: int
 @export var invincibility_time: float = 0.5 # Time player is invincible after being hit
 var invincibility_timer: float = 0.0 # Current invincibility time
 var is_dead: bool = false
+
+# Score variables
+@export_group("score variables")
+var score: int = 0
+@export var zombie_kill_points: int = 10
+@export var elite_zombie_kill_points: int = 30
+@export var elite_zombie_threshold: int = 100 # Points needed before elite zombies spawn
+@export var spawn_rate_increase_threshold: int = 200 # Points needed before spawn rate increases
+
 @export var dashTime : float
 var dashTimeRef : float
 @export var nbDashAllowed : int
@@ -141,6 +150,11 @@ func _ready():
 	# Initialize health
 	current_health = max_health
 	is_dead = false
+	
+	# Initialize score
+	score = 0
+	if hud:
+		hud.update_score_display(score)
 	
 	#set the start move speed
 	moveSpeed = walkSpeed
@@ -769,11 +783,18 @@ func collisionHandling():
 		
 		if lastCollision:
 			var collidedBody = lastCollision.get_collider()
-			var layer = collidedBody.collision_layer
-			
-			#here, we check the layer of the collider, then we check if the layer 3 (walkableWall) is enabled, with 1 << 3-1. If theses two points are valid, the character can wallrun
-			if layer & (1 << 3-1) != 0: canWallRun = true 
-			else: canWallRun = false
+			if collidedBody and is_instance_valid(collidedBody):
+				var layer = collidedBody.collision_layer
+				
+				#here, we check the layer of the collider, then we check if the layer 3 (walkableWall) is enabled, with 1 << 3-1. If theses two points are valid, the character can wallrun
+				if layer & (1 << 3-1) != 0: canWallRun = true 
+				else: canWallRun = false
+			else:
+				# Invalid collider, can't wall run
+				canWallRun = false
+		else:
+			# No collision info, can't wall run
+			canWallRun = false
 			
 func _on_object_tool_send_knockback(knockbackAmount : float, knockbackOrientation : Vector3):
 	#this function handle the knockback mechanic
@@ -849,6 +870,34 @@ func die() -> void:
 	mesh.material_override = StandardMaterial3D.new()
 	mesh.material_override.albedo_color = Color(0.5, 0.5, 0.5, 1)
 
-	# Add bullet to scene
-	# get_tree().current_scene.add_child(b)
-	# print("Bullet added to scene tree. Position: ", b.global_position)
+# Add points to player's score
+func add_score(points: int) -> void:
+	var old_score = score
+	score += points
+	print("Score increased by ", points, ". New score: ", score)
+	
+	# Update HUD
+	if hud:
+		hud.update_score_display(score)
+	
+	# Check if we've reached thresholds for zombie difficulty
+	if old_score < elite_zombie_threshold && score >= elite_zombie_threshold:
+		print("Elite zombies unlocked!")
+		if hud:
+			hud.show_milestone_notification("WARNING: Elite Zombies Incoming!")
+		
+	if old_score < spawn_rate_increase_threshold && score >= spawn_rate_increase_threshold:
+		print("Spawn rate increased!")
+		if hud:
+			hud.show_milestone_notification("DANGER: Zombie Outbreak Intensifying!")
+	
+	# Create additional milestones every 500 points
+	# Use floor division by converting to int
+	if floor(old_score / 500.0) < floor(score / 500.0):
+		var milestone = floor(score / 500.0) * 500
+		if hud:
+			hud.show_milestone_notification("Score Milestone: " + str(milestone) + "!")
+			
+			# Could add gameplay effects here, like temporary invincibility or health boost
+			current_health = min(current_health + 20, max_health) # Bonus health at milestones
+			hud.update_health_display(current_health, max_health)

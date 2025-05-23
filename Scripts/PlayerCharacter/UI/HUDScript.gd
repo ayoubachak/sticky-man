@@ -3,6 +3,9 @@ extends Control
 #class name
 class_name HUD
 
+# Global variable to track when last notification appeared
+var last_notification_time: float = 0
+
 #references variables
 @onready var currentStateLabelText = $HBoxContainer/VBoxContainer2/CurrentStateLabelText
 @onready var moveSpeedLabelText = $HBoxContainer/VBoxContainer2/MoveSpeedLabelText
@@ -18,17 +21,25 @@ class_name HUD
 @onready var speedLinesContainer = $SpeedLinesContrainer
 @onready var health_bar = $HealthBar
 @onready var game_over_screen = $GameOverScreen
+@onready var score_label = $ScoreContainer/ScoreLabel
 
 func _ready():
 	# Set process mode to allow UI interaction when the game is paused
 	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	
 	speedLinesContainer.visible = false #the speed lines will only be displayed when the character will dashing
-	
-	# Initialize health bar
+		# Initialize health bar
 	if health_bar and health_bar.has_node("Label"):
 		health_bar.value = 100
 		health_bar.get_node("Label").text = "100 / 100"
+	
+	# Initialize score display
+	if has_node("ScoreContainer/ScoreLabel"):
+		score_label = $ScoreContainer/ScoreLabel
+		score_label.text = "SCORE: 0"
+		print("Score label initialized")
+	else:
+		print("WARNING: Score label not found in HUD")
 	
 	# Hide game over screen at start
 	if game_over_screen:
@@ -123,7 +134,9 @@ func displaySpeedLines(dashTime):
 	
 func _process(_delta):
 	#this function manage the frames per second displayment
-	framesPerSecondLabelText.set_text(str(Engine.get_frames_per_second()))
+	if framesPerSecondLabelText and is_instance_valid(framesPerSecondLabelText):
+		var fps = Engine.get_frames_per_second()
+		framesPerSecondLabelText.text = str(fps)
 
 # Updates the health display with current and max health
 func update_health_display(current: int, maximum: int):
@@ -134,12 +147,101 @@ func update_health_display(current: int, maximum: int):
 		if health_bar.has_node("Label"):
 			health_bar.get_node("Label").text = str(current) + " / " + str(maximum)
 
+# Updates the score display
+func update_score_display(new_score: int):
+	# Try to find the label again if it wasn't initialized previously
+	if not score_label or not is_instance_valid(score_label):
+		if has_node("ScoreContainer/ScoreLabel"):
+			score_label = $ScoreContainer/ScoreLabel
+			print("Score label re-initialized")
+		else:
+			print("ERROR: Cannot find score label to update")
+			return
+	
+	# Update the score text
+	score_label.text = "SCORE: " + str(new_score)
+	
+	# Optional: Add animation for score change
+	score_label.modulate = Color(1, 1, 0.5) # Bright yellow
+	var tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	tween.tween_property(score_label, "modulate", Color(1, 1, 1), 0.5)
+
+# Show a milestone notification when the player reaches a score threshold
+func show_milestone_notification(message: String):
+	# Check if enough time has passed since the last notification (minimum 3 seconds)
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_notification_time < 3.0:
+		print("Skipping notification due to time constraint: " + message)
+		return
+		
+	last_notification_time = current_time
+	
+	# Check if a notification is already visible - clean up existing ones
+	var existing_notifications = get_tree().get_nodes_in_group("milestone_notification")
+	for note in existing_notifications:
+		note.queue_free()
+		
+	# Create a notification label
+	var milestone_label = Label.new()
+	milestone_label.text = message
+	milestone_label.add_to_group("milestone_notification") # Add to group for tracking
+	
+	# Set font explicitly from resource
+	var font_res = load("res://Arts/Fonts/Ticketing.ttf")
+	if font_res:
+		milestone_label.add_theme_font_override("font", font_res)
+		
+	milestone_label.add_theme_font_size_override("font_size", 28)
+	milestone_label.modulate = Color(1, 0.7, 0.3, 1) # Orange-yellow (easier to read than red)
+	milestone_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	
+	# Position it in the upper part of the screen (less likely to overlap with other UI)
+	milestone_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	milestone_label.position.y += 120 # Move down from the very top
+	add_child(milestone_label)
+	
+	# Add a slight outline for better readability
+	milestone_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	milestone_label.add_theme_constant_override("outline_size", 2)
+	
+	# Animate it
+	milestone_label.scale = Vector2(0, 0)
+	var tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	
+	# Add a reference to keep the label valid during the animation
+	milestone_label.set_meta("active_tween", tween)
+	
+	# Use strong references to prevent cleanup during animation
+	tween.tween_property(milestone_label, "scale", Vector2(1, 1), 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
+	tween.tween_interval(2.0) # Show for 2 seconds
+	tween.tween_property(milestone_label, "modulate:a", 0.0, 1.0) # Fade out
+	
+	# Safer cleanup that checks if the object still exists
+	tween.finished.connect(func():
+		if is_instance_valid(milestone_label) and milestone_label.is_inside_tree():
+			milestone_label.queue_free()
+	)
+
 # Shows the game over screen
 func show_game_over():
-	if game_over_screen:
+	# Clean up any active milestone notifications first
+	var existing_notifications = get_tree().get_nodes_in_group("milestone_notification")
+	for note in existing_notifications:
+		if is_instance_valid(note):
+			note.queue_free()
+			
+	if game_over_screen and is_instance_valid(game_over_screen):
 		# Use the GameOverScreen's dedicated show method if it's using our script
 		if game_over_screen.has_method("show_screen"):
 			game_over_screen.show_screen()
+			
+			# Update final score if the method exists
+			if game_over_screen.has_method("update_final_score"):
+				# Get the player's score
+				var players = get_tree().get_nodes_in_group("PlayerCharacter")
+				if players.size() > 0 and is_instance_valid(players[0]):
+					var player_score = players[0].score
+					game_over_screen.update_final_score(player_score)
 		else:
 			# Fallback to the old method
 			game_over_screen.visible = true

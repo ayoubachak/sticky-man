@@ -82,6 +82,24 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("1_f2d5g")
 text = "FPS"
 
+[node name="ScoreContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -400.0
+offset_top = 60.0
+offset_right = -20.0
+offset_bottom = 120.0
+grow_horizontal = 0
+
+[node name="ScoreLabel" type="Label" parent="ScoreContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_f2d5g")
+theme_override_font_sizes/font_size = 24
+text = "SCORE: 0"
+horizontal_alignment = 2
+
 [node name="SpeedLinesContrainer" type="Control" parent="."]
 visible = false
 layout_mode = 1

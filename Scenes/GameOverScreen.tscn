@@ -52,6 +52,16 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/separation = 20
 
+[node name="FinalScoreLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_g88fa")
+theme_override_font_sizes/font_size = 40
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+text = "FINAL SCORE: 0"
+horizontal_alignment = 1
+
 [node name="RestartButton" type="Button" parent="VBoxContainer"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
