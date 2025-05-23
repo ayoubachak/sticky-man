@@ -51,24 +51,26 @@ func _physics_process(_delta: float) -> void:
 	velocity.y -= gravity_val * _delta
 
 	if player:
+		# Calculate full 3D distance to player for attack range check
+		var full_dir = player.global_transform.origin - global_transform.origin
+		var full_distance_to_player = full_dir.length()
+		
 		# chase on horizontal plane without touching vertical velocity
-		var dir = player.global_transform.origin - global_transform.origin
-		dir.y = 0
+		var horizontal_dir = full_dir
+		horizontal_dir.y = 0
+		var horizontal_distance = horizontal_dir.length()
 		
-		# Check if close enough to attack
-		var distance_to_player = dir.length()
-		
-		if distance_to_player > 0:
-			dir = dir.normalized()
-			velocity.x = dir.x * speed
-			velocity.z = dir.z * speed
+		if horizontal_distance > 0:
+			horizontal_dir = horizontal_dir.normalized()
+			velocity.x = horizontal_dir.x * speed
+			velocity.z = horizontal_dir.z * speed
 			
 		# Handle attack timer and attack if close enough
 		if attack_timer > 0:
 			attack_timer -= _delta
 		
-		# If we're close to player and attack timer is ready, attack
-		if distance_to_player < 2.0 and attack_timer <= 0:
+		# If we're close to player (3D distance) and attack timer is ready, attack
+		if full_distance_to_player < 2.0 and attack_timer <= 0:
 			attack_player()
 			attack_timer = attack_interval
 
