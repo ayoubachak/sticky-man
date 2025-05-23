@@ -26,10 +26,10 @@ func _ready() -> void:
 	visible = true
 	$MeshInstance3D.visible = true
 	
-	# Both player and zombies are on layer 2 according to the scene files!
-	# We'll need to use groups to distinguish them rather than layers
+	# Player is on layer 1 and zombies are on layer 2
+	# Using groups for reliable detection
 	collision_layer = 4   # Layer 3 (bullets)
-	collision_mask = 3    # Detect layers 1 & 2 (since we need to check both)
+	collision_mask = 3    # Detect layers 1 & 2 (player and zombies)
 	
 	print("Bullet collision setup - will use group checks for hit detection")
 	

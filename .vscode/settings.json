@@ -1,3 +1,4 @@
 {
-    "iis.configDir": ""
+    "iis.configDir": "",
+    "godotTools.editorPath.godot4": "c:\\Users\\etudiant-root\\Work\\Godot\\Godot_v4.3-stable_win64.exe"
 }
