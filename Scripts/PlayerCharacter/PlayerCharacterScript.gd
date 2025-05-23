@@ -95,6 +95,19 @@ var score: int = 0
 @export var elite_zombie_threshold: int = 100 # Points needed before elite zombies spawn
 @export var spawn_rate_increase_threshold: int = 200 # Points needed before spawn rate increases
 
+# Ability Energy System
+@export_group("ability energy system")
+@export var dash_max_energy: float = 1.0
+var dash_current_energy: float = 1.0
+@export var dash_energy_consumption: float = 0.25  # 25% per use
+@export var dash_energy_regen_rate: float = 0.15   # Regenerates 15% per second (slow)
+
+@export var grapple_max_energy: float = 1.0
+var grapple_current_energy: float = 1.0
+@export var grapple_energy_consumption: float = 0.15  # 15% per use
+@export var grapple_energy_regen_rate: float = 0.12   # Regenerates 12% per second (slower)
+
+# Legacy dash variables (keeping for compatibility)
 @export var dashTime : float
 var dashTimeRef : float
 @export var nbDashAllowed : int
@@ -202,6 +215,9 @@ func _process(_delta):
 	
 func _physics_process(delta):
 	#the behaviours that is preferable to check every "physics" frame
+	
+	# Regenerate ability energy over time
+	regenerate_ability_energy(delta)
 	
 	applies(delta)
 	
@@ -346,9 +362,9 @@ func displayStats():
 	hud.displayNbJumpsAllowedInAir(nbJumpsInAirAllowed)
 	hud.displayGrappleHookToolWaitTime(timeBeforeCanGrappleAgain)
 	
-	# Update ability cooldown bars
-	hud.update_dash_bar(timeBeforeCanDashAgain, timeBeforeCanDashAgainRef)
-	hud.update_grapple_bar(timeBeforeCanGrappleAgain, timeBeforeCanGrappleAgainRef)
+	# Update ability energy bars (now showing energy levels instead of cooldowns)
+	hud.update_dash_bar_energy(dash_current_energy, dash_max_energy, dash_energy_consumption)
+	hud.update_grapple_bar_energy(grapple_current_energy, grapple_max_energy, grapple_energy_consumption)
 	
 	#not a property, but a visual
 	if currentState == states.DASH: hud.displaySpeedLines(dashTime)
@@ -725,18 +741,20 @@ func slideStateChanges():
 		else: runStateChanges()
 		
 func dashStateChanges():
-	#condition here, the state is changed only if the character is moving (so has an input direction)
-	if inputDirection != Vector2.ZERO and timeBeforeCanDashAgain <= 0.0 and nbDashAllowed > 0:
+	#condition here, the state is changed only if the character is moving and has enough energy
+	if inputDirection != Vector2.ZERO and can_use_dash():
 		currentState = states.DASH
-		nbDashAllowed -= 1
+		use_dash_energy()  # Consume energy instead of using cooldown system
 		moveSpeed = dashSpeed 
 		dashTime = dashTimeRef
 		velocityPreDash = velocity #save the pre dash velocity, to apply it when the dash is finished (to get back to a normal velocity)
 		
+		print("Dash used! Energy remaining: ", dash_current_energy)
+		
 		if mesh.scale.y != 1.0:
 			mesh.scale.y = 1.0
 			mesh.position.y = 0.0
-			
+		
 func wallrunStateChanges():
 	#condition here, the state is changed only if the character speed is greater than the walk speed
 	if velocity.length() > walkSpeed and currentState != states.DASH and currentState != states.CROUCH and canWallRun: 
@@ -753,19 +771,20 @@ func wallrunStateChanges():
 			mesh.position.y = 0.0
 			
 func grappleStateChanges():
-	#condition here, the state is changed only if the character isn't already grappling, and the grapple check is colliding
-	if grappleHookCheck.is_colliding() and timeBeforeCanGrappleAgain <= 0.0 and currentState != states.GRAPPLE:
+	#condition here, the state is changed only if the character isn't already grappling, has enough energy, and the grapple check is colliding
+	if grappleHookCheck.is_colliding() and can_use_grapple() and currentState != states.GRAPPLE:
 		currentState = states.GRAPPLE
+		use_grapple_energy()  # Consume energy instead of using cooldown system
 		
 		if is_on_floor(): velocity.y = grappleLaunchJumpVelocity
 		
-		timeBeforeCanGrappleAgain = timeBeforeCanGrappleAgainRef
 		if nbJumpsInAirAllowed < nbJumpsInAirAllowedRef: nbJumpsInAirAllowed = nbJumpsInAirAllowedRef
 		moveSpeed = grapHookSpeed
 		
+		print("Grapple used! Energy remaining: ", grapple_current_energy)
+		
 		#get the collision point of the grapple hook raycast check
 		anchorPoint = grappleHookCheck.get_collision_point()
-		
 		
 		standHitbox.disabled = false
 		crouchHitbox.disabled = true
@@ -905,3 +924,31 @@ func add_score(points: int) -> void:
 			# Could add gameplay effects here, like temporary invincibility or health boost
 			current_health = min(current_health + 20, max_health) # Bonus health at milestones
 			hud.update_health_display(current_health, max_health)
+
+# Regenerate ability energy over time
+func regenerate_ability_energy(delta: float):
+	# Regenerate dash energy
+	if dash_current_energy < dash_max_energy:
+		dash_current_energy += dash_energy_regen_rate * delta
+		dash_current_energy = min(dash_current_energy, dash_max_energy)
+	
+	# Regenerate grapple energy
+	if grapple_current_energy < grapple_max_energy:
+		grapple_current_energy += grapple_energy_regen_rate * delta
+		grapple_current_energy = min(grapple_current_energy, grapple_max_energy)
+
+# Check if ability has enough energy to be used
+func can_use_dash() -> bool:
+	return dash_current_energy >= dash_energy_consumption
+
+func can_use_grapple() -> bool:
+	return grapple_current_energy >= grapple_energy_consumption
+
+# Consume energy when using abilities
+func use_dash_energy():
+	dash_current_energy -= dash_energy_consumption
+	dash_current_energy = max(dash_current_energy, 0.0)
+
+func use_grapple_energy():
+	grapple_current_energy -= grapple_energy_consumption
+	grapple_current_energy = max(grapple_current_energy, 0.0)

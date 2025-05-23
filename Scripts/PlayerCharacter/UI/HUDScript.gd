@@ -206,6 +206,22 @@ func update_dash_bar(current_cooldown: float, max_cooldown: float):
 		else:
 			dash_bar.modulate.a = 0.7  # On cooldown
 
+# Update the dash ability bar with energy system
+func update_dash_bar_energy(current_energy: float, max_energy: float, min_energy_needed: float):
+	if dash_bar and is_instance_valid(dash_bar):
+		# Show current energy as percentage
+		var percentage = (current_energy / max_energy) * 100.0
+		dash_bar.value = percentage
+		
+		# Change appearance based on whether ability can be used
+		if current_energy >= min_energy_needed:
+			dash_bar.modulate.a = 1.0  # Can use ability
+		else:
+			dash_bar.modulate.a = 0.6  # Not enough energy
+			# Optional: Add a pulsing effect when low on energy
+			var time = Time.get_ticks_msec() / 1000.0
+			dash_bar.modulate.a = 0.6 + 0.2 * sin(time * 6.0)
+
 # Update the grapple hook ability bar
 func update_grapple_bar(current_cooldown: float, max_cooldown: float):
 	if grapple_bar and is_instance_valid(grapple_bar):
@@ -218,6 +234,22 @@ func update_grapple_bar(current_cooldown: float, max_cooldown: float):
 		else:
 			grapple_bar.modulate.a = 0.7  # On cooldown
 
+# Update the grapple hook ability bar with energy system
+func update_grapple_bar_energy(current_energy: float, max_energy: float, min_energy_needed: float):
+	if grapple_bar and is_instance_valid(grapple_bar):
+		# Show current energy as percentage
+		var percentage = (current_energy / max_energy) * 100.0
+		grapple_bar.value = percentage
+		
+		# Change appearance based on whether ability can be used
+		if current_energy >= min_energy_needed:
+			grapple_bar.modulate.a = 1.0  # Can use ability
+		else:
+			grapple_bar.modulate.a = 0.6  # Not enough energy
+			# Optional: Add a pulsing effect when low on energy
+			var time = Time.get_ticks_msec() / 1000.0
+			grapple_bar.modulate.a = 0.6 + 0.2 * sin(time * 5.0)
+
 # Update the knockback tool ability bar
 func update_knockback_bar(current_cooldown: float, max_cooldown: float):
 	if knockback_bar and is_instance_valid(knockback_bar):
@@ -229,6 +261,22 @@ func update_knockback_bar(current_cooldown: float, max_cooldown: float):
 			knockback_bar.modulate.a = 1.0  # Fully available
 		else:
 			knockback_bar.modulate.a = 0.7  # On cooldown
+
+# Update the knockback tool ability bar with energy system
+func update_knockback_bar_energy(current_energy: float, max_energy: float, min_energy_needed: float):
+	if knockback_bar and is_instance_valid(knockback_bar):
+		# Show current energy as percentage
+		var percentage = (current_energy / max_energy) * 100.0
+		knockback_bar.value = percentage
+		
+		# Change appearance based on whether ability can be used
+		if current_energy >= min_energy_needed:
+			knockback_bar.modulate.a = 1.0  # Can use ability
+		else:
+			knockback_bar.modulate.a = 0.6  # Not enough energy
+			# Optional: Add a pulsing effect when low on energy (fastest pulse for fastest regen)
+			var time = Time.get_ticks_msec() / 1000.0
+			knockback_bar.modulate.a = 0.6 + 0.2 * sin(time * 8.0)
 
 # Show a milestone notification when the player reaches a score threshold
 func show_milestone_notification(message: String):
