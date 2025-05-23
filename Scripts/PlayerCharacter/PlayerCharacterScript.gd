@@ -768,32 +768,16 @@ func _on_object_tool_send_knockback(knockbackAmount : float, knockbackOrientatio
 	
 func shoot():
 	var b = bullet_scene.instantiate()
-	
-	# Add debug to verify we're using the right scene
 	print("Creating bullet from: ", bullet_scene.resource_path)
-	
-	# Use the player's actual position as the base for spawning
-	# We'll use a point in front of the player where the camera is looking
-	
-	# Get the camera's forward direction
-	var shoot_direction = -camera3d.global_transform.basis.z.normalized()
-	
-	# Create the bullet at the player's position plus an offset in the shooting direction
-	# This keeps it attached to the player but positioned forward enough to avoid collision
-	var spawn_position = global_position + Vector3(0, 1.5, 0) + (shoot_direction * 1.5)
-	
-	# Debug logs
-	print("Player position: ", global_position)
-	print("Shoot direction: ", shoot_direction)
-	print("Bullet spawn position: ", spawn_position)
-	
-	# Set bullet position to spawn position
-	b.global_position = spawn_position
-	
-	# Keep the camera's orientation for the bullet direction (this was working well)
-	b.global_transform.basis = camera3d.global_transform.basis
-	
+
+	# Calculate bullet transform based on camera
+	var bullet_transform = camera3d.global_transform
+	# Offset spawn point a bit forward
+	bullet_transform.origin += -bullet_transform.basis.z.normalized() * 2.0
+
+	# Apply full transform to the bullet
+	b.global_transform = bullet_transform
+
 	# Add bullet to scene
 	get_tree().current_scene.add_child(b)
 	print("Bullet added to scene tree. Position: ", b.global_position)
-	print("Bullet is visible: ", b.visible)
