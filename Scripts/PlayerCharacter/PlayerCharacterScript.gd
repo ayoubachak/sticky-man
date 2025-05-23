@@ -78,6 +78,14 @@ var canWallRun : bool
 
 #dash variables
 @export_group("dash variables")
+
+#health variables
+@export_group("health variables")
+@export var max_health: int = 100
+var current_health: int
+@export var invincibility_time: float = 0.5 # Time player is invincible after being hit
+var invincibility_timer: float = 0.0 # Current invincibility time
+var is_dead: bool = false
 @export var dashTime : float
 var dashTimeRef : float
 @export var nbDashAllowed : int
@@ -129,6 +137,10 @@ var timeBeforeCanGrappleAgainRef : float
 func _ready():
 	# Add player to group for reference by bullets
 	add_to_group("PlayerCharacter")
+	
+	# Initialize health
+	current_health = max_health
+	is_dead = false
 	
 	#set the start move speed
 	moveSpeed = walkSpeed
@@ -184,6 +196,9 @@ func _physics_process(delta):
 	grappleHookManagement(delta)
 	
 	collisionHandling()
+	
+	# Process damage invincibility
+	process_invincibility(delta)
 	
 	move_and_slide()
 
@@ -777,7 +792,63 @@ func shoot():
 
 	# Apply full transform to the bullet
 	b.global_transform = bullet_transform
+	
+	# Add bullet to the game
+	get_tree().get_root().add_child(b)
+
+# Handle player damage
+func take_damage(amount: int) -> void:
+	# Check if player is currently invincible
+	if invincibility_timer > 0:
+		return
+		
+	# Apply damage
+	current_health -= amount
+	if current_health < 0:
+		current_health = 0
+	
+	# Update HUD
+	if hud:
+		hud.update_health_display(current_health, max_health)
+	
+	# Start invincibility timer
+	invincibility_timer = invincibility_time
+	
+	# Flash the player red when hit
+	mesh.material_override = StandardMaterial3D.new()
+	mesh.material_override.albedo_color = Color(1, 0.3, 0.3, 1)
+	get_tree().create_timer(0.15).timeout.connect(func(): 
+		mesh.material_override = null
+	)
+	
+	# Check if player is dead
+	if current_health <= 0:
+		die()
+
+# Process damage invincibility timer
+func process_invincibility(delta: float) -> void:
+	if invincibility_timer > 0:
+		invincibility_timer -= delta
+
+# Handle player death
+func die() -> void:
+	if is_dead:
+		return
+		
+	is_dead = true
+	print("Player died")
+	
+	# Disable player input
+	canInput = false
+	
+	# Show game over screen
+	if hud:
+		hud.show_game_over()
+	
+	# Optional: play death animation or effects
+	mesh.material_override = StandardMaterial3D.new()
+	mesh.material_override.albedo_color = Color(0.5, 0.5, 0.5, 1)
 
 	# Add bullet to scene
-	get_tree().current_scene.add_child(b)
-	print("Bullet added to scene tree. Position: ", b.global_position)
+	# get_tree().current_scene.add_child(b)
+	# print("Bullet added to scene tree. Position: ", b.global_position)

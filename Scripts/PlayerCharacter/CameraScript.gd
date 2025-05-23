@@ -69,12 +69,12 @@ func _ready():
 	
 func _unhandled_input(event):
 	#this function manage camera rotation (360 on x axis, blocked at <= -60 and >= 60 on y axis, to not having the character do a complete head turn, which will be kinda weird)
-	if !pauseMenu.pauseMenuEnabled: #can only rotate when the ui is not opened
+	if !pauseMenu.pauseMenuEnabled and !get_tree().paused: #can only rotate when the ui is not opened and game is not paused
 		if event is InputEventMouseMotion:
 			rotate_y(-event.relative.x * XAxisSensibility)
 			camera.rotate_x(-event.relative.y * YAxisSensibility)
 			camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(maxUpAngleView), deg_to_rad(maxDownAngleView))
-			mouseInput = event.relative #get position of the mouse in a 2D sceen, so save it in a Vector2 
+			mouseInput = event.relative #get position of the mouse in a 2D sceen, so save it in a Vector2
 		
 func _process(delta):
 	applies(delta)

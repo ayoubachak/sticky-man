@@ -3,6 +3,9 @@ extends CharacterBody3D
 @export var max_health: int = 100
 var current_health: int
 @export var speed: float = 5.0
+@export var attack_damage: int = 10    # Damage per hit
+@export var attack_interval: float = 2.0 # Time between attacks
+var attack_timer: float = 0.0 # Current attack timer
 
 @onready var label: Label3D = $Label3D
 @onready var mesh_instance: MeshInstance3D = $MeshInstance3D
@@ -36,10 +39,23 @@ func _physics_process(_delta: float) -> void:
 		# chase on horizontal plane without touching vertical velocity
 		var dir = player.global_transform.origin - global_transform.origin
 		dir.y = 0
-		if dir.length() > 0:
+		
+		# Check if close enough to attack
+		var distance_to_player = dir.length()
+		
+		if distance_to_player > 0:
 			dir = dir.normalized()
 			velocity.x = dir.x * speed
 			velocity.z = dir.z * speed
+			
+		# Handle attack timer and attack if close enough
+		if attack_timer > 0:
+			attack_timer -= _delta
+		
+		# If we're close to player and attack timer is ready, attack
+		if distance_to_player < 2.0 and attack_timer <= 0:
+			attack_player()
+			attack_timer = attack_interval
 
 	move_and_slide()
 
@@ -62,6 +78,18 @@ func take_damage(amount: int) -> void:
 	if current_health <= 0:
 		# Play death effect using the prepared material
 		if hit_material:
-			hit_material.albedo_color = Color(0.5, 0.5, 0.5, 1)
-		# Schedule deletion after a short delay for visual feedback
+			hit_material.albedo_color = Color(0.5, 0.5, 0.5, 1)		# Schedule deletion after a short delay for visual feedback
 		get_tree().create_timer(0.3).timeout.connect(func(): queue_free())
+		
+# Attack the player character
+func attack_player() -> void:
+	if player and player.has_method("take_damage"):
+		print("Zombie attacking player with damage: ", attack_damage)
+		player.take_damage(attack_damage)
+		
+		# Visual feedback for attack
+		if hit_material:
+			hit_material.albedo_color = Color(1, 0.7, 0, 1) # Orange for attack
+			get_tree().create_timer(0.2).timeout.connect(func(): 
+				hit_material.albedo_color = Color(1, 1, 1, 1)
+			)
